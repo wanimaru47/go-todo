@@ -7,6 +7,7 @@ import (
 	"github.com/voyagegroup/go-todo/model"
 
 	"github.com/jmoiron/sqlx"
+	"strconv"
 )
 
 // Todo はTodoへのリクエストに関する制御をします
@@ -111,4 +112,17 @@ func (t *Todo) Toggle(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return JSON(w, http.StatusOK, todo)
+}
+
+func (t *Todo) Search(w http.ResponseWriter, r *http.Request) error {
+	status, err := strconv.ParseBool(r.URL.Query().Get("status"))
+	if err != nil {
+		return err
+	}
+
+	todos, err := model.ToDosCompletedAll(t.DB, status)
+	if err != nil {
+		return err
+	}
+	return JSON(w, http.StatusOK, todos)
 }

@@ -23,6 +23,14 @@ func TodosAll(dbx *sqlx.DB) (todos []Todo, err error) {
 	return todos, nil
 }
 
+func ToDosCompletedAll(dbx *sqlx.DB, isCompleted bool) (todos []Todo, err error) {
+	if err := dbx.Select(&todos, "select * from todos where completed = ?", isCompleted); err != nil {
+		return nil, err
+	}
+
+	return todos, nil
+}
+
 func TodoOne(dbx *sqlx.DB, id int64) (*Todo, error) {
 	var todo Todo
 	if err := dbx.Get(&todo, `
